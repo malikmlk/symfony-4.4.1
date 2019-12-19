@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Layout testing</title>
+<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+<style>
+    footer{height: 10vh;}
+    section{height: 50vh;}
+</style>
+</head>
+<body>
+
+{% block header %}
+    {% include 'header.html.twig' %}
+{% endblock %}
+
+{% block navigation %}
+    {% include 'navigation.html.twig' %}
+{% endblock %}
+
+{% block section %}
+    <section>
+        {% include 'section.html.twig' %}
+    </section>
+{% endblock %}
+
+{% block footer %}
+    <footer>
+        {% include 'footer.html.twig' %}
+    </footer>
+{% endblock %}
+</body>
+</html>
