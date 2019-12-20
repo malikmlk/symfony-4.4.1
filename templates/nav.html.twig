@@ -18,10 +18,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <a href="./index.php/profile" class="btn border border-secondary">{{ app.user }}</a>
-        <button type="button" class="btn border border-secondary"><a class="link" href="./index.php/login">Deconnexion</a></button>
+        <button type="button" class="btn border border-secondary"><a class="link" href="{{ path('fos_user_security_logout') }}">Deconnexion</a></button>
         {% else %}
-        <button type="button" class="btn border border-secondary"><a class="link" href="./index.php/logout">Connexion</a></button>
+        <button type="button" class="btn border border-secondary"><a class="link" href="./index.php/fos_user_security_login">Connexion</a></button>
         {% endif %}
-        <button type="button" class="btn border border-secondary"><a class="link" href="./index.php/register">Inscription</a></button>
+        <button type="button" class="btn border border-secondary"><a class="link" href="./index.php/fos_user_registration_register">Inscription</a></button>
     </div>
 </nav>
