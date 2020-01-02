@@ -4,7 +4,13 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
+
 /**
+ * @ORM\Entity
+ * @Vich\Uploadable
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
  */
 class Post
@@ -32,14 +38,21 @@ class Post
     private $content;
 
     /**
+     * @ORM\Column(type="text", length=255)
+     */
+    private $image;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     private $created_at;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Vich\UploadableField(mapping="post_image", fileNameProperty="image")
+     * @var File
      */
-    private $image;
+    private $imageFile;
+
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      */
@@ -124,5 +137,19 @@ class Post
     public function __construct()
     {
         $this->created_at = new \DateTime;
+    }
+
+    public function setImageFile(File $image = null)
+    {
+        $this->imageFile = $image;
+
+        if ($image) {
+            $this->created_at = new \DateTime('now');
+        }
+    }
+
+    public function getImageFile()
+    {
+        return $this->imageFile;
     }
 }
