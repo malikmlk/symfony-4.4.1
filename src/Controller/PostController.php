@@ -34,11 +34,22 @@ class PostController extends AbstractController
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
+        if(!$this->getUser()){
+            $this->addFlash('notice', 'Vous devez être connecté pour avoir acces à cette page');
+
+            return $this->redirectToRoute('post_index');
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
+            $post->setUser($this->getUser());
+
             $entityManager->persist($post);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Youpi');
+            
             return $this->redirectToRoute('post_index');
         }
 
