@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Commentaire;
+use App\Form\CommentaireType;
 
 /**
  * @Route("/post")
@@ -64,14 +66,45 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="post_show", methods={"GET"})
+     * @Route("/{id}", name="post_show", methods={"GET", "POST"})
      */
-    public function show(Post $post): Response
+    public function show(Post $post, Request $request): Response
     {
+        // return $this->render('post/show.html.twig', [
+        //     'post' => $post,
+        // ]);
+        
+        $commentaire = new Commentaire();
+        $form = $this->createForm(CommentaireType::class, $commentaire);
+        $form->handleRequest($request);
+
+        if(!$this->getUser()){
+            $this->addFlash('com','Vous devez être identifiez pour commenter');
+            
+            return $this->redirectToRoute('commentaire_index');
+        }
+        $entityManager = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+            $commentaire->setUser($this->getUser());
+            $commentaire->setPost($post);
+
+            $entityManager->persist($commentaire);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('commentaire_index');
+        }
+
+        $commentaires = $entityManager->getRepository('App:Commentaire')->findByPost($post);
+
         return $this->render('post/show.html.twig', [
             'post' => $post,
+            'form' => $form->createView(),
+            'commentaires' => $commentaires
         ]);
     }
+    
 
     /**
      * @Route("/{id}/edit", name="post_edit", methods={"GET","POST"})
