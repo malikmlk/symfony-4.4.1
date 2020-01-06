@@ -22,4 +22,6 @@ class RegistrationType extends AbstractType
     {
         return 'app_user_registration';
     }
+
+    
 }

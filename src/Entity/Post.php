@@ -3,10 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-
 
 /**
  * @ORM\Entity
@@ -38,14 +36,19 @@ class Post
     private $content;
 
     /**
-     * @ORM\Column(type="text", length=255)
-     */
-    private $image;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $created_at;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     */
+    protected $user;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
 
     /**
      * @Vich\UploadableField(mapping="post_image", fileNameProperty="image")
@@ -53,10 +56,10 @@ class Post
      */
     private $imageFile;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     */
-    protected $user;
+    public function __construct()
+    {
+        $this->created_at = new \Datetime;
+    }
 
     public function getId(): ?int
     {
@@ -80,7 +83,7 @@ class Post
         return $this->summary;
     }
 
-    public function setSummary(?string $summary): self
+    public function setSummary(string $summary): self
     {
         $this->summary = $summary;
 
@@ -123,6 +126,21 @@ class Post
         return $this;
     }
 
+    public function setImageFile(File $image = null)
+    {
+        $this->imageFile = $image;
+
+        if ($image) {
+            
+            $this->created_at = new \DateTime('now');
+        }
+    }
+
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -133,23 +151,5 @@ class Post
         $this->user = $user;
 
         return $this;
-    }
-    public function __construct()
-    {
-        $this->created_at = new \DateTime;
-    }
-
-    public function setImageFile(File $image = null)
-    {
-        $this->imageFile = $image;
-
-        if ($image) {
-            $this->created_at = new \DateTime('now');
-        }
-    }
-
-    public function getImageFile()
-    {
-        return $this->imageFile;
     }
 }

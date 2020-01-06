@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/post")
@@ -20,8 +21,12 @@ class PostController extends AbstractController
      */
     public function index(PostRepository $postRepository): Response
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $posts = $em->getRepository('App:Post')->getLastInsertId('App:Post',3);
+
         return $this->render('post/index.html.twig', [
-            'posts' => $postRepository->findAll(),
+            'posts' => $posts,
         ]);
     }
 
@@ -35,8 +40,8 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if(!$this->getUser()){
-            $this->addFlash('notice', 'Vous devez être connecté pour avoir acces à cette page');
-
+            $this->addFlash('notice','Vous devez être identifiez pour accéder a cet section');
+            
             return $this->redirectToRoute('post_index');
         }
 
@@ -47,9 +52,8 @@ class PostController extends AbstractController
 
             $entityManager->persist($post);
             $entityManager->flush();
+            $this->addFlash('add','L\'article a bien été ajouté !');
 
-            $this->addFlash('success', 'Youpi');
-            
             return $this->redirectToRoute('post_index');
         }
 
@@ -101,5 +105,19 @@ class PostController extends AbstractController
         }
 
         return $this->redirectToRoute('post_index');
+    }
+
+    /**
+     * @Route("/api/post/", name="api_post_index", methods={"GET"})
+     */
+    public function apiIndex()
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        $posts = $em->getRepository('App:Post')->getLastInsertedAjax('App:Post', 3);
+
+        return new JsonResponse(array(
+            'posts' => $posts
+        ));
     }
 }

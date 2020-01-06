@@ -16,7 +16,7 @@ class PostType extends AbstractType
             ->add('title')
             ->add('summary')
             ->add('content')
-            ->add('created_at')
+            ->add('image')
             ->add('imageFile', VichImageType::class, array(
                 'required' => true,
                 'allow_delete' => true,
